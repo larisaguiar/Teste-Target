@@ -1,13 +1,18 @@
+const { isUtf8 } = require('buffer');
 const fs = require('fs');
 
-// Função para ler os dados do faturamento mensal a partir de um arquivo JSON
-function lerFaturamentoMensal(nomeArquivo) {
-    const dados = fs.readFileSync(nomeArquivo);
-    return JSON.parse(dados);
+// ler dados do arquivo adicional json
+async function leituraDados(nomeArquivo) {
+    try {
+        const dados = await fs.promises.readFile(nomeArquivo, { encoding: 'utf8' }); 
+        return JSON.parse(dados);
+    } catch (err) {
+        console.error('Erro ao ler o arquivo:', err);
+        throw err;
+    }
 }
 
-// Função para calcular as métricas de faturamento
-function calcularMetricasFaturamento(faturamentoMensal) {
+const calculaFaturamento = faturamentoMensal => {
     const diasComFaturamento = faturamentoMensal.filter(dia => dia.valor > 0).map(dia => dia.valor);
 
     const menorValor = Math.min(...diasComFaturamento);
@@ -19,16 +24,19 @@ function calcularMetricasFaturamento(faturamentoMensal) {
     return [menorValor, maiorValor, diasAcimaDaMedia];
 }
 
-// Nome do arquivo contendo os dados do faturamento mensal
 const arquivoFaturamento = 'dados.json';
 
-// Lê os dados do faturamento mensal
-const faturamentoMensal = lerFaturamentoMensal(arquivoFaturamento);
+(async () => {
+    try {
+        const faturamentoMensal = await leituraDados(arquivoFaturamento);
 
-// Calcula as métricas de faturamento
-const [menor, maior, acimaMedia] = calcularMetricasFaturamento(faturamentoMensal);
+        // Calcula as métricas de faturamento
+        const [menor, maior, acimaMedia] = calculaFaturamento(faturamentoMensal);
 
-// Exibe os resultados
-console.log(`Menor valor de faturamento: ${menor}`);
-console.log(`Maior valor de faturamento: ${maior}`);
-console.log(`Dias com faturamento acima da média mensal: ${acimaMedia}`);
+        console.log(`Menor valor de faturamento: ${menor}`);
+        console.log(`Maior valor de faturamento: ${maior}`);
+        console.log(`Dias com faturamento acima da média mensal: ${acimaMedia}`);
+    } catch (error) {
+        console.error('Ocorreu um erro:', error);
+    }
+})();
