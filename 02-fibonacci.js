@@ -10,10 +10,10 @@ function Fibonacci(numero) {
 }
 
 // Número a ser verificado se pertence à sequência de Fibonacci
-let numero = parseInt(prompt("Digite um número para verificar se pertence à sequência de Fibonacci:"));
+let numero = parseInt(prompt("Informe um número:"));
 
 if (Fibonacci(numero)) {
-    console.log(` ${numero} pertence à sequência de Fibonacci.`);
+    console.log(`${numero} pertence à sequência de Fibonacci.`);
 } else {
-    console.log(` ${numero} não pertence à sequência de Fibonacci.`);
+    console.log(`${numero} não pertence à sequência de Fibonacci.`);
 }
